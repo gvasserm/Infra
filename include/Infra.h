@@ -219,7 +219,7 @@ extern "C" void INFRA_Log(const std::string& msg);
 extern "C" void INFRA_Show(std::string title, const cv::Mat& img);
 //extern "C" void INFRA_Show_3d(std::string title, VisBuffer&);
 extern "C" void INFRA_Init(const INFRA::ConfigTree& config);
-extern "C" void INFRA_Init_IAR();
+extern "C" void INFRA_Init_AICV();
 extern "C" void INFRA_UseThreadChannel(INFRA::ChannelId channelId);
 extern "C" Probe* INFRA_GetProbe(ProbeId);
 extern "C" void INFRA_Destroy();

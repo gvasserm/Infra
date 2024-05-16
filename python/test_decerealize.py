@@ -3,7 +3,7 @@ import numpy as np
 
 def deserialize_cv_mat(json_path):
     with open(json_path, 'r') as file:
-        data = json.load(file)['value0']
+        data = json.load(file)['value1']
     
     # Extract the necessary information
     dims = data["dims"]
@@ -23,7 +23,7 @@ def deserialize_cv_mat(json_path):
     return array_data
 
 # Example usage
-json_path = '/home/gvasserm/dev/Infra/DEVL/Cloud_1.dump'
+json_path = '/home/gvasserm/dev/Infra/INFRA/Cloud_1.dump'
 mat = deserialize_cv_mat(json_path)
 
 print(mat)

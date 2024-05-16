@@ -342,7 +342,7 @@ void INFRA_Init(const INFRA::ConfigTree& config)
 	INFRA::Instance().Init(config);
 }
 
-void INFRA_Init_IAR()
+void INFRA_Init_AICV()
 {
 	INFRA::Instance().Init();
 }

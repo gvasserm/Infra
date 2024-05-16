@@ -11,6 +11,7 @@
 #include "Infra.h"
 #include "cereal_serialization.h"
 
+
 // Task function that the executor will run
 void SampleTask(void* arg)
 {
@@ -75,61 +76,21 @@ int main()
 }
 )";
 
-	INFRA::ConfigTree tree;
-	boost::property_tree::json_parser::read_json(ss, tree);
+	//INFRA::ConfigTree tree;
+	//boost::property_tree::json_parser::read_json(ss, tree);
 
 	// Init
-	INFRA_Init(INFRA::ConfigTree());
+	auto DEVLConfig = INFRA::ConfigTree();
+	DEVLConfig.put("outDirPath", "dump");
+	INFRA_Init(DEVLConfig);
 	INFRA_UseThreadChannel("Main");
 
-    cv::Mat_<double> m = cv::Mat_<double>::ones(5, 5);
-    
-    INFRA_DUMP_JSON("Cloud_" + std::to_string(1)) << m << m;
+	std::vector<double> arr = {1.1, 2.2, 3.3, 4.4, 5.5};
+	cameraIntrinsic c;
 
+    cv::Mat_<double> m = (cv::Mat_<double>(3, 3) << 1, 2, 3, 4, 5, 6, 7, 8, 9);
+	cv::Mat m_ = (cv::Mat_<double>(3, 3) << 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    INFRA_DUMP_JSON("Cloud_" + std::to_string(1)) << arr << m << m_ << c;
+	INFRA_DUMP_JSON("Cloud_" + std::to_string(1)) << arr;
 
-	// DUMP JSON
-    /*
-	INFRA_DUMP_JSON_OPEN("hftracking_frame_10");
-	INFRA_DUMP_JSON_WRITE << cereal::NameValuePair<float>("age", 120);
-	INFRA_DUMP_JSON_WRITE << cereal::NameValuePair<std::string>("funny", "no");	
-	
-	[]() { INFRA_DUMP_JSON_OPEN("hftracking_frame_11"); }();
-	INFRA_DUMP_JSON_WRITE << cereal::NameValuePair<std::string>("name", "chen");
-	[]() { INFRA_DUMP_JSON_WRITE << cereal::NameValuePair<std::string>("sane", "no"); }();
-
-	// PROBE
-	INFRA::Instance().InsertProbe("probe1", 0);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-	bool threadAlive = true;
-	std::thread worker([&threadAlive]() {
-		int i = 0;
-		while (threadAlive)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			INFRA_PROBE_RESPONSE_BEGIN("probe1")
-				probe->GetStream() << "test " << i;
-			INFRA_PROBE_RESPONSE_END;
-			i++;
-		}
-	});
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	auto probe = INFRA::Instance().InsertProbe("probe1", 100);
-	if (probe == nullptr)
-	{
-		std::cout << "probe not successful";
-	}
-	else
-	{
-		std::cout << "probe success: " << probe->GetStream().str() << std::endl;
-	}
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	probe = INFRA::Instance().InsertProbe("probe1", 100);
-	std::cout << "probe success: " << probe->GetStream().str() << std::endl;
-
-	threadAlive = false;
-	worker.join();
-    */
 }

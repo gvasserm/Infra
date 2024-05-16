@@ -6,10 +6,12 @@
 #include <cereal/types/vector.hpp>
 #include <opencv2/core/core.hpp>
 
+#include "SampleClass.h"
+
 namespace cv
 {
 	template<class Archive, class T>
-	void serialize(Archive & archive, cv::Mat_<T> & mat)
+	void serialize(Archive & archive, const cv::Mat_<T> & mat)
 	{
 		int rows, cols, type;
 		bool continuous;
@@ -18,19 +20,11 @@ namespace cv
 		cols = mat.cols;
 		type = mat.type();
 		continuous = mat.isContinuous();
-
-		/*
-		if (rows == 0 || cols == 0) {			
-			archive.finishNode();
-			return;
-		}
-		*/
 		
 		archive & cereal::make_nvp("dims", mat.dims);
 		archive & cereal::make_nvp("rows", rows);
 		archive & cereal::make_nvp("cols", cols);
 		archive & cereal::make_nvp("type", type);
-		//ar & cereal::make_nvp("dims", mat.size());
 
 		if (continuous) 
 		{
@@ -45,6 +39,39 @@ namespace cv
 			archive.finishNode();
 		}
 	}
+
+
+	template<class Archive>
+	void serialize(Archive & archive, cv::Mat & mat)
+	{
+		int rows, cols, type;
+		bool continuous;
+
+		if (Archive::is_saving::value)
+		{
+			rows = mat.rows;
+			cols = mat.cols;
+			type = mat.type();
+			continuous = mat.isContinuous();
+		}
+
+		archive & cereal::make_nvp("dims", mat.dims);
+		archive & cereal::make_nvp("rows", rows);
+		archive & cereal::make_nvp("cols", cols);
+		archive & cereal::make_nvp("type", type);
+
+		archive.setNextName("data");
+		archive.startNode();
+		archive.makeArray();
+		
+		for (int i = 0; i < rows*cols; i++)
+		{
+			archive(mat.at<double>(i));
+		}
+		archive.finishNode();
+	}
+
+
 
 	template<class Archive>
 	void serialize(Archive & archive, cv::DMatch & o)
@@ -82,5 +109,19 @@ namespace cv
 		);
 	}
 } // namespace cv
+
+template<class Archive>
+void serialize(Archive & archive, cameraIntrinsic & o)
+{
+	archive(CEREAL_NVP(o.focalLength),
+		CEREAL_NVP(o.principalPoint),
+		CEREAL_NVP(o.distortionCoef),
+		CEREAL_NVP(o.distortionCoefLength),
+		CEREAL_NVP(o.skewCoef),
+		CEREAL_NVP(o.fov),
+		CEREAL_NVP(o.frameHeight),
+		CEREAL_NVP(o.frameWidth)
+	);
+}
 
 #endif
